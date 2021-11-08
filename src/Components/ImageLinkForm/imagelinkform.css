@@ -1,0 +1,61 @@
+.ILF_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ILF_main-text {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.ILF_submission-area {
+    margin: 0rem 10rem;
+    padding: 5rem 0;
+    box-shadow: 11px 8px 4px 3px rgb(0 0 0 / 30%);
+    border-radius: 15px;
+}
+
+.ILF_input-box {
+    font-size: 1.6rem;
+    width: 40%;
+    padding: 1rem;
+    margin-right: 1rem;
+}
+
+.ILF_detect-button {
+    text-align: center;
+    width: 7%;
+    padding: 1rem;
+    background-color: #ffd2ba;
+    border: 1px none;
+    border-radius: 5%;
+    box-shadow: 3px 4px 4px rgb(0 0 0 / 20%);
+    transition: all 0.5s;
+    cursor: pointer;
+}
+
+.ILF_detect-button span {
+    font-size: 1.6rem;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+  
+.ILF_detect-button span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+  
+.ILF_detect-button:hover span {
+    padding-right: 18px;
+}
+  
+.ILF_detect-button:hover span:after {
+    opacity: 1;
+    right: 0;
+}
