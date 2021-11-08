@@ -9,7 +9,7 @@
 }
 
 .ILF_submission-area {
-    margin: 0rem 10rem;
+    margin: 0rem 5rem;
     padding: 5rem 0;
     box-shadow: 11px 8px 4px 3px rgb(0 0 0 / 30%);
     border-radius: 15px;
@@ -17,14 +17,14 @@
 
 .ILF_input-box {
     font-size: 1.6rem;
-    width: 40%;
+    width: 45%;
     padding: 1rem;
     margin-right: 1rem;
 }
 
 .ILF_detect-button {
     text-align: center;
-    width: 7%;
+    width: 8rem;
     padding: 1rem;
     background-color: #ffd2ba;
     border: 1px none;
@@ -47,12 +47,12 @@
     position: absolute;
     opacity: 0;
     top: 0;
-    right: -20px;
+    right: -2rem;
     transition: 0.5s;
 }
   
 .ILF_detect-button:hover span {
-    padding-right: 18px;
+    padding-right: 1.8rem;
 }
   
 .ILF_detect-button:hover span:after {
