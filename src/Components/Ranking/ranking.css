@@ -1,3 +1,8 @@
 .Ranking_container {
-    margin: 4rem 0rem;
+    margin-top: 4rem;
+    margin-bottom: 0;
+}
+
+.Ranking_message {
+    margin-bottom: 1rem;
 }

@@ -20,7 +20,8 @@ class App extends React.Component {
     super();
     this.state = {
       input: '',
-      imageURL: ''
+      imageURL: '',
+      box: {}
     };
   }
 
@@ -29,7 +30,26 @@ class App extends React.Component {
     this.setState({input: event.target.value})
   }
 
-  onButtonSubmit = (event) => {
+  calculateFaceLocation = (data) => {
+    const clarifaiFace =  data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById('FR_main-img');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    console.log(width);
+    return {
+      leftCol : clarifaiFace.left_col * width,
+      topRow : clarifaiFace.top_row * height,
+      rightCol : width - (clarifaiFace.right_col * width),
+      bottomRow : height - (clarifaiFace.bottom_row * height)
+    }
+  }
+
+  displayFaceLocation = (boxInfo) => {
+    this.setState({box : boxInfo})
+    console.log(boxInfo);
+  }
+
+  onButtonSubmit = () => {
     this.setState({imageURL: this.state.input});
 
     // Used for calling Clarifai Face Detection AI Model
@@ -41,9 +61,11 @@ class App extends React.Component {
           this.state.input
         );
       })
-      .then((response) => {
-        console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-      });
+      .then(response => {
+
+        this.displayFaceLocation(this.calculateFaceLocation(response));
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -52,7 +74,7 @@ class App extends React.Component {
         <Navigation />
         <Ranking />
         <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-        <FacialRecogition imageURL={this.state.imageURL} />
+        <FacialRecogition imageURL={this.state.imageURL} box={this.state.box} />
       </div>
     );
   }
