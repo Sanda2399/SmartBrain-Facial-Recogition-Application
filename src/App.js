@@ -25,7 +25,14 @@ class App extends React.Component {
       imageURL: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     };
   }
 
@@ -49,10 +56,9 @@ class App extends React.Component {
 
   displayFaceLocation = (boxInfo) => {
     this.setState({box : boxInfo})
-    console.log(boxInfo);
   };
 
-  onButtonSubmit = () => {
+  onPictureSubmit = () => {
     this.setState({imageURL: this.state.input});
 
     // Used for calling Clarifai Face Detection AI Model
@@ -65,7 +71,21 @@ class App extends React.Component {
         );
       })
       .then(response => {
-
+        if (response)
+        {
+          fetch('http://localhost:3000/image', 
+          {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                id: this.state.user.id
+            })
+          })
+            .then(response => response.json())
+            .then(count => {
+              this.setState(Object.assign(this.state.user, {entries: count}))
+            })
+        }
         this.displayFaceLocation(this.calculateFaceLocation(response));
       })
       .catch(err => console.log(err));
@@ -85,6 +105,19 @@ class App extends React.Component {
     this.setState({isSignedIn: false});
   }
 
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined
+      }
+    })
+  }
+
+  ///////// Main Render Function /////////
   render() {
     return (
       <div className="App">
@@ -92,18 +125,16 @@ class App extends React.Component {
         {
           this.state.route === 'home' ? 
           <div>
-            <Ranking />
-            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+            <Ranking UserName={this.state.user.name} UserEntries={this.state.user.entries}/>
+            <ImageLinkForm onInputChange={this.onInputChange} onPictureSubmit={this.onPictureSubmit} />
             <FacialRecogition imageURL={this.state.imageURL} box={this.state.box} />
           </div> :
           (
             this.state.route === 'signin' 
-            ? <SignIn routeChangeAndTrue={this.routeChangeAndTrue} routeChangeAndFalse={this.routeChangeAndFalse}/>
-            : <Register routeChangeAndTrue={this.routeChangeAndTrue} routeChangeAndFalse={this.routeChangeAndFalse}/>
+            ? <SignIn routeChangeAndTrue={this.routeChangeAndTrue} routeChangeAndFalse={this.routeChangeAndFalse} loadUser={this.loadUser}/>
+            : <Register routeChangeAndTrue={this.routeChangeAndTrue} routeChangeAndFalse={this.routeChangeAndFalse} loadUser={this.loadUser}/>
           )
         }
-        {console.log(this.state.route)}
-        {console.log(this.state.isSignedIn)}
       </div>
     );
   }
