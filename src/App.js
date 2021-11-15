@@ -1,5 +1,4 @@
 import './App.css';
-import Clarifai from 'clarifai';
 import ImageLinkForm from './Components/ImageLinkForm/imagelinkform';
 import Navigation from './Components/Navigation/navigation';
 import Ranking from './Components/Ranking/ranking';
@@ -9,12 +8,21 @@ import SignIn from './Components/SignInForm/signin';
 import Register from './Components/RegisterForm/register';
 
 ///////// Variables /////////
-const app = new Clarifai.App(
-  {
-    apiKey: '412dc614d4fc442585f824ce6c17cbd9'
-  }
-);
 
+const initialState = {
+  input: '',
+  imageURL: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+};
 
 ///////// Main /////////
 class App extends React.Component {
@@ -61,37 +69,44 @@ class App extends React.Component {
   onPictureSubmit = () => {
     this.setState({imageURL: this.state.input});
 
-    // Used for calling Clarifai Face Detection AI Model
-    app.models.initModel({
-        id: Clarifai.FACE_DETECT_MODEL,
-      })
-      .then((faceDetectModel) => {
-        return faceDetectModel.predict(
-          this.state.input
-        );
-      })
-      .then(response => {
-        if (response)
+    fetch('http://localhost:3000/imageUrl', 
+      {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            input: this.state.input
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+      if (response)
+      {
+        fetch('http://localhost:3000/image', 
         {
-          fetch('http://localhost:3000/image', 
-          {
-            method: 'put',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                id: this.state.user.id
-            })
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+              id: this.state.user.id
           })
-            .then(response => response.json())
-            .then(count => {
-              this.setState(Object.assign(this.state.user, {entries: count}))
-            })
-        }
-        this.displayFaceLocation(this.calculateFaceLocation(response));
-      })
-      .catch(err => console.log(err));
+        })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, {entries: count}))
+          })
+          .catch(console.log)
+      }
+      this.displayFaceLocation(this.calculateFaceLocation(response));
+    })
+    .catch(err => console.log(err));
   };
+  ////////////////////////////////////////////////////////////
 
   onRouteChange = (route) => {
+    if (route === 'signin')
+    {
+      this.setState(initialState);
+    }
+
     this.setState({route: route});
   };
 
