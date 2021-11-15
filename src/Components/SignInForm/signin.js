@@ -23,7 +23,7 @@ class SignIn extends React.Component {
     onSubmitSignIn = (event) => {
         console.log(this.state);
         event.preventDefault();
-        fetch('http://localhost:3000/signin', 
+        fetch('https://agile-journey-45011.herokuapp.com/signin', 
         {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
